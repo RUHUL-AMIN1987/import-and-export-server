@@ -82,21 +82,7 @@ app.post('/products', async (req, res) => {
     res.send(result);
 });
 
-    //PATCH
-    app.patch('/product/:id', async (req, res) => {
-        const id = req.params.id;
-        const updatedProducts = req.body;
-        const query = { _id: new ObjectId(id) }; 
-        const update = {
-            $set: {
-                name: updatedProducts.name,
-                price: updatedProducts.price
-            }
-        };
-        const result = await productsCollection.updateOne(query, update);
-        res.send(result);
-    });
-
+  
 
     // DELETE 
     app.delete('/products/:id', async(req, res) =>{
@@ -124,14 +110,6 @@ app.post('/products', async (req, res) => {
         }
         const cursor = bidsCollection.find(query)
         const result = await cursor.toArray()
-        res.send(result)
-    })
-
-    //New Bids
-
-    app.post('/bids', async(req, res) =>{
-        const newBids = req.body;
-        const result = await bidsCollection.insertOne(newBids)
         res.send(result)
     })
 

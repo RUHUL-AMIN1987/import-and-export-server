@@ -34,6 +34,7 @@ async function run() {
     const userCollection = db.collection('users');
 
 
+
     
 
  // GET all user
@@ -44,7 +45,7 @@ app.post('/users', async(req, res) =>{
     const query = {email:email};
     const existingUser = await userCollection.findOne(query);
     if(existingUser){
-        console.log("Existing user found:", existingUser); // <-- add this
+        console.log("Existing user found:", existingUser); 
         res.send({message: 'User already exits.'})
     }
 
@@ -57,11 +58,28 @@ app.post('/users', async(req, res) =>{
 
     // GET all products
 app.get('/products', async (req, res) => {
-    const projectField = {title: 1, price_min: 1, price_max: 1, image: 1}
-    const cursor = productsCollection.find().sort({price_min: -1}).project(projectField);
+  try {
+    const projectField = {
+      _id: 1,
+      product_name: 1,
+      product_image: 1,
+      price: 1,
+      origin_country: 1,
+      rating: 1,
+      available_quantity: 1
+    };
+
+    const cursor = productsCollection.find({}, { projection: projectField });
     const result = await cursor.toArray();
+
     res.send(result);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).send({ message: 'Failed to fetch products' });
+  }
 });
+
+
  app.get('/latest-products', async(req, res) =>{
     const cursor = productsCollection.find().sort({created_at: -1}).limit(6);
     const result = await cursor.toArray()

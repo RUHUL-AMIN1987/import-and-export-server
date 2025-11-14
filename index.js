@@ -26,7 +26,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const db = client.db('smart_db');
     const productsCollection = db.collection('products');
@@ -79,6 +79,9 @@ app.get('/products', async (req, res) => {
   }
 });
 
+app.get('/', async(req, res) =>{
+  res.send('server is running')
+})
 
  app.get('/latest-products', async(req, res) =>{
     const cursor = productsCollection.find().sort({created_at: -1}).limit(6);
@@ -131,8 +134,17 @@ app.post('/products', async (req, res) => {
         res.send(result)
     })
 
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    app.post('/bids' , async(req, res) =>{
+      const bidsData = req.body
+      console.log(bidsData)
+      const result = await bidsCollection.insertOne(bidsData)
+      res.send(result);
+    })
+
+
+
+    // await client.db("admin").command({ ping: 1 });
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
 
   }
